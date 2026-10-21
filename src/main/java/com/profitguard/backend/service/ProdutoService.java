@@ -41,4 +41,8 @@ public class ProdutoService {
         Produto produto = buscarPorId(id);
         produtoRepository.delete(produto);
     }
+
+    public List<Produto> listarComEstoqueBaixo() {
+        return produtoRepository.findComEstoqueBaixo();
+    }
 }
