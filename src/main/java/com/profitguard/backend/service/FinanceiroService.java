@@ -46,4 +46,13 @@ public class FinanceiroService {
     public BigDecimal calcularSaldo() {
         return somarPorTipo(TipoTransacao.RECEITA).subtract(somarPorTipo(TipoTransacao.DESPESA));
     }
+
+    public TransacaoFinanceira registrarReceitaDeVenda(BigDecimal valor, Long vendaId) {
+        TransacaoFinanceira transacao = new TransacaoFinanceira();
+        transacao.setTipo(TipoTransacao.RECEITA);
+        transacao.setCategoria("Venda");
+        transacao.setDescricao("Receita gerada automaticamente pela venda #" + vendaId);
+        transacao.setValor(valor);
+        return transacaoRepository.save(transacao);
+    }
 }
