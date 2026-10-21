@@ -2,6 +2,7 @@ package com.profitguard.backend.controller;
 
 import com.profitguard.backend.model.Produto;
 import com.profitguard.backend.service.ProdutoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,12 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public Produto criar(@RequestBody Produto produto) {
+    public Produto criar(@Valid @RequestBody Produto produto) {
         return produtoService.criar(produto);
     }
 
     @PutMapping("/{id}")
-    public Produto atualizar(@PathVariable Long id, @RequestBody Produto produto) {
+    public Produto atualizar(@PathVariable Long id, @Valid @RequestBody Produto produto) {
         return produtoService.atualizar(id, produto);
     }
 

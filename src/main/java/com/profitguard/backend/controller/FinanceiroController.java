@@ -3,6 +3,7 @@ package com.profitguard.backend.controller;
 import com.profitguard.backend.dto.TransacaoFinanceiraRequest;
 import com.profitguard.backend.model.TransacaoFinanceira;
 import com.profitguard.backend.service.FinanceiroService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class FinanceiroController {
     }
 
     @PostMapping("/transacoes")
-    public TransacaoFinanceira registrar(@RequestBody TransacaoFinanceiraRequest request) {
+    public TransacaoFinanceira registrar(@Valid @RequestBody TransacaoFinanceiraRequest request) {
         return financeiroService.registrar(request);
     }
 
