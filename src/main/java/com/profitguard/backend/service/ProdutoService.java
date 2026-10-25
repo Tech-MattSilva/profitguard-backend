@@ -34,6 +34,7 @@ public class ProdutoService {
         produto.setEstoqueMinimo(dadosAtualizados.getEstoqueMinimo());
         produto.setCustoUnitario(dadosAtualizados.getCustoUnitario());
         produto.setPrecoVenda(dadosAtualizados.getPrecoVenda());
+        produto.setInsumoImportado(dadosAtualizados.getInsumoImportado());
         return produtoRepository.save(produto);
     }
 
@@ -45,4 +46,5 @@ public class ProdutoService {
     public List<Produto> listarComEstoqueBaixo() {
         return produtoRepository.findComEstoqueBaixo();
     }
+
 }

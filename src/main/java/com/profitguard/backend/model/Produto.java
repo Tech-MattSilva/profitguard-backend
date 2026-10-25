@@ -36,4 +36,6 @@ public class Produto {
     @NotNull(message = "O preço de venda é obrigatório")
     @PositiveOrZero(message = "O preço não pode ser negativo")
     private BigDecimal precoVenda;
+
+    private Boolean insumoImportado = false;
 }

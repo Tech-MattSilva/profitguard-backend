@@ -43,7 +43,9 @@ public class DadosDeExemploLoader implements CommandLineRunner {
         Produto cimento = criarProduto("Cimento 50kg", 100, 20, "28.50", "39.90");
         Produto areia = criarProduto("Areia media", 40, 10, "85.00", "130.00");
         Produto tijolo = criarProduto("Tijolo 8 furos", 2000, 500, "0.80", "1.20");
-        criarProduto("Prego 18x27 kg", 8, 10, "12.00", "18.00");
+        Produto prego = criarProduto("Prego 18x27 kg", 8, 10, "12.00", "18.00");
+        prego.setInsumoImportado(true);
+        produtoService.criar(prego); // já tem id, então o save atualiza
         criarProduto("Tinta acrilica 18L", 25, 5, "180.00", "290.00");
 
         registrarVenda(item(cimento, 30), item(areia, 5));

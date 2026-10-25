@@ -15,6 +15,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.profitguard.backend.dto.CotacaoDolar;
+import java.util.Optional;
 
 @Service
 public class RecomendacaoService {
@@ -22,6 +24,10 @@ public class RecomendacaoService {
     private static final int JANELA_DIAS = 30;             // período analisado
     private static final int DIAS_COBERTURA_ALVO = 30;     // quanto tempo queremos cobrir ao repor
     private static final int DIAS_COBERTURA_CRITICA = 7;   // abaixo disso é urgente
+    private static final double LIMITE_VARIACAO_CAMBIO = 2.0; // em %
+
+    @Autowired
+    private CambioService cambioService;
 
     @Autowired
     private ProdutoService produtoService;
@@ -76,11 +82,31 @@ public class RecomendacaoService {
                 ? "O saldo em caixa cobre a compra."
                 : "Atenção: o saldo em caixa (R$ " + String.format("%.2f", saldo) + ") não cobre essa compra.");
 
+        Prioridade prioridade = (estoque == 0 || coberturaCritica) ? Prioridade.ALTA : Prioridade.MEDIA;
+
+        if (Boolean.TRUE.equals(produto.getInsumoImportado())) {
+            Optional<CotacaoDolar> cotacao = cambioService.obterCotacao();
+            if (cotacao.isPresent()) {
+                double variacao = cotacao.get().variacaoPercentual().doubleValue();
+                String pct = String.format("%.2f", Math.abs(variacao));
+                if (variacao >= LIMITE_VARIACAO_CAMBIO) {
+                    mensagem += " Cenário externo: o dólar subiu " + pct
+                            + "% no último mês e este insumo é importado, considere antecipar a compra.";
+                    prioridade = Prioridade.ALTA;
+                } else if (variacao <= -LIMITE_VARIACAO_CAMBIO) {
+                    mensagem += " Cenário externo: o dólar caiu " + pct
+                            + "% no último mês e este insumo é importado, pode valer aguardar antes de comprar.";
+                } else {
+                    mensagem += " Cenário externo: câmbio estável no último mês (variação de " + pct + "%).";
+                }
+            }
+        }
+
         RecomendacaoResponse r = new RecomendacaoResponse();
         r.setProdutoId(produto.getId());
         r.setProdutoNome(produto.getNome());
         r.setTipo(Tipo.REPOR_ESTOQUE);
-        r.setPrioridade(estoque == 0 || coberturaCritica ? Prioridade.ALTA : Prioridade.MEDIA);
+        r.setPrioridade(prioridade);
         r.setMensagem(mensagem);
         r.setQuantidadeSugerida(quantidadeSugerida);
         r.setCustoEstimado(custo);
